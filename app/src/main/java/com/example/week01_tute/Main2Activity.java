@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity {
+    private Coin mCoin;
     private TextView mName;
     private TextView mSymbol;
     private TextView mValue;
@@ -25,9 +26,6 @@ public class Main2Activity extends AppCompatActivity {
     private TextView mMarketcap;
     private TextView mVolume;
     private ImageView mSearch;
-
-    private static final String TAG = "Main2Activity";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,65 +42,30 @@ public class Main2Activity extends AppCompatActivity {
         mVolume = findViewById(R.id.tvVolumeField);
         mSearch = findViewById(R.id.ivSearch);
 
-
         Intent intent = getIntent();
-        String coinSymbol = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        Log.i(TAG, "Coin Symbol = " + coinSymbol);
+        int position = intent.getIntExtra(MainActivity.EXTRA_MESSAGE, 0);
+
+        mCoin = Coin.getCoins().get(position);
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        ArrayList<Coin> coins = Coin.getCoins();
-
-        //first method
-        //final Coin coin = Coin.searchCoin(coinSymbol);
-
-        final Coin coin = Coin.getCoins().get(0);
-        mName.setText(coin.getName());
-        mSymbol.setText(coin.getSymbol());
-        mValue.setText(formatter.format(coin.getValue()));
-        mChange1h.setText((coin.getChange1h()) + "%" );
-        mChange24h.setText((coin.getChange24h()) + "%");
-        mChange7d.setText((coin.getChange7d()) + "%");
-        mMarketcap.setText(formatter.format(coin.getMarketcap()));
-        mVolume.setText(formatter.format(coin.getVolume()));
+        setTitle(mCoin.getName());
+        mName.setText(mCoin.getName());
+        mSymbol.setText(mCoin.getSymbol());
+        mValue.setText(formatter.format(mCoin.getValue()));
+        mChange1h.setText(String.valueOf(mCoin.getChange1h()) + " %");
+        mChange24h.setText(String.valueOf(mCoin.getChange24h()) + " %");
+        mChange7d.setText(String.valueOf(mCoin.getChange7d()) + " %");
+        mMarketcap.setText(formatter.format(mCoin.getMarketcap()));
+        mVolume.setText(formatter.format(mCoin.getVolume()));
         mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchCoin(coin.getName());
-
-            }
-            private void searchCoin(String name) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?qm" + name));
-                startActivity(intent);
+                searchCoin(mCoin.getName());
             }
         });
+    }
 
-
-
-
-
-
-
-
-
-
-
-        //String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-
-        //mDetailMessage = findViewById(R.id.tvDetailMessage);
-       // mDetailMessage.setText(message);
-
-       // mShowVideoButton = findViewById(R.id.btnShowVideo);
-       // mShowVideoButton.setOnClickListener(new View.OnClickListener() {
-         //   @Override
-           // public void onClick(View v) {
-                //showVideo("https://www.youtube.com/watch?v=TklUIoHkxp0");
-          //  }
-        //});
-
-
-
-   // }
-    //private void showVideo(String url){
-     //   Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-       // startActivity(intent);
+    private void searchCoin(String name) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=" + name));
+        startActivity(intent);
     }
 }
